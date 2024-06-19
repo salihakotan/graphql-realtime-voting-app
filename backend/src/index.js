@@ -10,23 +10,38 @@ export const schema = createSchema({
     type Query {
       questions: [Question!]
       question(id:ID!): Question!
-      votes: [Vote!]
+
+      votes(question_id:ID): [Vote!]
+      vote(id:ID!): Vote!
+
+      options: [Option!]
+      option(id:ID!):Option!
+
+    #   total(question_id:ID): Int
+
     }
 
     type Question{
         id:ID!,
         title:String!
         options:[Option!]
+        votes:[Vote!]
+        total:Int
     }
 
     type Option{
         id:ID!
         text:String!
+        question_id:ID!,
+        question:Question!
     }
 
     type Vote{
+        id:ID!
         question_id:ID!,
+        question:Question!
         option_id:ID!
+        option:Option!
     }
 
 
@@ -37,8 +52,33 @@ export const schema = createSchema({
     Query: {
       questions: () => db.questions,
       question: (parent,args) => db.questions.find((question)=> question.id === args.id),
-      votes:()=> db.votes
-    }
+
+      votes:(parent,args)=> args.question_id ? db.votes.filter((vote)=> vote.question_id === args.question_id) : db.votes,
+      vote: (parent,args) => db.votes.find((vote)=> vote.id === args.id),
+
+      options:()=> db.options,
+      option: (parent,args) => db.options.find((option)=> option.id === args.id),
+
+    //   total:  (parent,args)=> db.votes.filter((vote)=> vote.question_id === args.question_id).length
+
+    },
+
+    Vote:{
+        question: (parent,args)=> db.questions.find((question)=> question.id === parent.question_id ),
+        option: (parent,args)=> db.options.find((option)=> option.id === parent.option_id) ,
+    },
+    Option:{
+        question:(parent,args)=> db.questions.find((question)=> question.id === parent.question_id)
+    },
+    Question:{
+        options: (parent,args)=> db.options.filter((option)=> option.question_id === parent.id) ,
+        votes: (parent,args)=> db.votes.filter((vote)=> vote.question_id === parent.id),
+        total:(parent,args)=> {
+            const count = db.votes.filter((vote)=> vote.question_id === parent.id).length
+            console.log("count", count)
+            return count
+        }
+    },
   }
 })
 

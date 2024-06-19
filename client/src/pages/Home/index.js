@@ -54,7 +54,7 @@ function Home() {
             {questions && !loading && (questions.map((question,i) => {
                 return  <Tr key={i} onClick={()=> handleRowClick(question)}>
                   <Td>{question.title}</Td>
-                  <Td isNumeric>25.4</Td>
+                  <Td isNumeric>{question.total}</Td>
                 </Tr>
               }))
               }

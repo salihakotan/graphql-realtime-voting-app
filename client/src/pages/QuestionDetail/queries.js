@@ -5,7 +5,7 @@ query getQuestion($id:ID!){
   question(id:$id){
     id,
     title,
-    options{text}
+    options{id,text}
   }
 }
 `

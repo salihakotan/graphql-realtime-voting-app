@@ -4,17 +4,13 @@ export const GET_QUESTIONS_QUERY = gql`
 query getQuestions{
   questions{
     id,
+    total,
     title,
-    options{text}
+    options{id,text
+      question_id,
+      ,question{title}}
+    votes{id,question{title}, option{text}}
   }
 }
 `
 
-export const GET_VOTES_QUERY = gql`
-query getVotes{
-  votes{
-    question_id,
-    option_id,
-    }
-}
-`
