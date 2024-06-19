@@ -32,7 +32,7 @@ code {
 
 .headerNav li{
   display: inline-block;
-  padding: 15px;
+  padding: 15px 0 15px 0;
   margin-right: 10px;
   background-color: #7461ff;
   border-radius:10px;
@@ -41,4 +41,34 @@ code {
 }
 .headerNav li:hover {
   background-color: #4229ff;
+}
+
+.headerNav li a {
+  padding: 15px;
+}
+
+.pageContentContainer{
+  padding: 20px;
+  background-color: #fff;
+}
+
+
+
+.chakra-table tbody tr:hover {
+  font-size: 18px!important;
+  border:2px solid #b9b9b9!important;
+  font-weight: bold;
+  color:#69550d
+}
+
+.chakra-table tbody tr:hover {
+  cursor: pointer!important;
+}
+
+.optionItem {
+  font-size: 20px;
+  background-color: #b0ffd5;
+  margin: 10px;
+  padding: 10px;
+  border-radius: 10px;
 }

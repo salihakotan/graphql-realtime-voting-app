@@ -9,6 +9,8 @@ export const schema = createSchema({
   typeDefs: /* GraphQL */ `
     type Query {
       questions: [Question!]
+      question(id:ID!): Question!
+      votes: [Vote!]
     }
 
     type Question{
@@ -18,15 +20,24 @@ export const schema = createSchema({
     }
 
     type Option{
+        id:ID!
         text:String!
     }
+
+    type Vote{
+        question_id:ID!,
+        option_id:ID!
+    }
+
 
   `,
 
 
   resolvers: {
     Query: {
-      questions: () => db.questions
+      questions: () => db.questions,
+      question: (parent,args) => db.questions.find((question)=> question.id === args.id),
+      votes:()=> db.votes
     }
   }
 })
