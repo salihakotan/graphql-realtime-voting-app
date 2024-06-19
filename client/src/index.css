@@ -11,3 +11,34 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+
+
+.headerDiv{
+  padding-top: 20px;
+  background-color: rgb(228, 76, 255);
+  color: white;
+}
+
+.headerDiv img{
+  width:110px
+}
+
+.headerNav{
+  background-color: #8979ff;
+  display: flex;
+  justify-content: center;
+}
+
+.headerNav li{
+  display: inline-block;
+  padding: 15px;
+  margin-right: 10px;
+  background-color: #7461ff;
+  border-radius:10px;
+  border:2px solid #3e319c;
+  box-shadow: 5px 5px #696969;
+}
+.headerNav li:hover {
+  background-color: #4229ff;
+}

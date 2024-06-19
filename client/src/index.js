@@ -4,14 +4,17 @@ import './index.css';
 import App from './App';
 import { ApolloProvider } from '@apollo/client';
 import { server } from './apollo';
-import { Router } from 'react-router-dom';
+import {   BrowserRouter as Router } from 'react-router-dom';
+import {ChakraProvider} from "@chakra-ui/react"
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <ApolloProvider client={server}>
   <Router>
+  <ChakraProvider>
     <App />
+    </ChakraProvider>
     </Router>
     </ApolloProvider>
 );

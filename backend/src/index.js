@@ -1,7 +1,8 @@
 import { createServer } from 'node:http'
-import { createYoga } from 'graphql-yoga'
-import { schema } from './schema'
+import { createSchema, createYoga } from 'graphql-yoga'
 import { db } from './db'
+import { WebSocketServer } from 'ws'
+import { useServer } from 'graphql-ws/lib/use/ws'
 
 
 export const schema = createSchema({
@@ -88,6 +89,6 @@ useServer(
 
  
 // Start the server and you're done!
-server.listen(4000, () => {
+httpServer.listen(4000, () => {
   console.info('Server is running on http://localhost:4000')
 })

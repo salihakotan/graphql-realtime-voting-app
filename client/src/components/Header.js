@@ -1,11 +1,17 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import {Heading, Image} from "@chakra-ui/react"
+import girl from "../../src/img/girl.png"
 
 function Header() {
   return (
-    <div>
+    <div className='headerDiv'>
+
+<Image margin="auto" alt='girl' src={girl}/>
+    <Heading mb="30px" mt="5" as="h1" textAlign="center">Realtime Voting App</Heading>
+   
         
-        <nav>
+    <nav className='headerNav'>
             <ul>
                 <li>
                     <Link to="/">Home</Link>
