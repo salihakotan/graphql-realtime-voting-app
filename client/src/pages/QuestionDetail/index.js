@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from "@apollo/client";
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
-import { GET_QUESTION_DETAIL_QUERY } from "./queries";
+import { GET_QUESTION_DETAIL_QUERY, NEW_VOTE_MUTATION } from "./queries";
 import {
   Button,
   Container,
@@ -10,21 +10,37 @@ import {
   RadioGroup,
   Stack,
 } from "@chakra-ui/react";
+import uniqid from "uniqid"
 
 function QuestionDetail() {
   const [optionValue, setOptionValue] = useState("");
 
   const { id } = useParams();
 
-  const { data, error, loading } = useQuery(GET_QUESTION_DETAIL_QUERY, {
+  const { data, error, loading }= useQuery(GET_QUESTION_DETAIL_QUERY, {
     variables: {
       id: id,
     },
   });
 
 
+  
 
-//   const {loading:voteLoading} = useMutation()
+
+  const [newVote,{loading:voteLoading}] = useMutation(NEW_VOTE_MUTATION, {
+    variables:{
+        data:{
+        option_id:optionValue,
+        question_id:id
+        }
+    }
+  })
+
+
+  const handleClickNewVote = () => {
+    newVote()
+    console.log("vote successfully saved ")
+  }
 
 
   if (loading) {
@@ -48,6 +64,7 @@ function QuestionDetail() {
           return (
             <div key={i} className="optionItem">
               <RadioGroup
+              disabled={voteLoading}
                 colorScheme="green"
                 onChange={setOptionValue}
                 value={optionValue}
@@ -65,7 +82,7 @@ function QuestionDetail() {
           );
         })}
 
-      <Button ml="15px" colorScheme="green" size="lg">
+      <Button onClick={handleClickNewVote} disabled={voteLoading} ml="15px" colorScheme="green" size="lg">
         Vote
       </Button>
     </div>

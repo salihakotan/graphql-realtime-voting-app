@@ -17,6 +17,7 @@ import { useNavigate } from "react-router-dom";
 function Home() {
   const { data, error, loading } = useQuery(GET_QUESTIONS_QUERY);
 
+
   const navigate = useNavigate()
 
   if (loading) {

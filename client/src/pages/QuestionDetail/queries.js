@@ -9,3 +9,19 @@ query getQuestion($id:ID!){
   }
 }
 `
+
+
+export const NEW_VOTE_MUTATION =gql`
+mutation newVote($data:NewVoteInput!){
+  newVote(data:$data) {
+    id
+    question_id,
+    option_id
+    question{
+      id,
+      title
+    }
+    option{text,id}
+  }
+}
+`

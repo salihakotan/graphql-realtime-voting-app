@@ -3,6 +3,8 @@ import { createSchema, createYoga } from 'graphql-yoga'
 import { db } from './db'
 import { WebSocketServer } from 'ws'
 import { useServer } from 'graphql-ws/lib/use/ws'
+import uniqid from "uniqid"
+import { title } from 'node:process'
 
 
 export const schema = createSchema({
@@ -20,6 +22,26 @@ export const schema = createSchema({
     #   total(question_id:ID): Int
 
     }
+
+    input NewVoteInput{
+        option_id:ID!,
+        question_id:ID!
+    }
+
+    input NewQuestionInput{
+        title:String!,
+    }
+
+   
+
+
+    type Mutation{
+        newVote(data:NewVoteInput!):Vote!
+        newQuestion(data:NewQuestionInput!): Question!
+    }
+
+   
+  
 
     type Question{
         id:ID!,
@@ -61,6 +83,31 @@ export const schema = createSchema({
 
     //   total:  (parent,args)=> db.votes.filter((vote)=> vote.question_id === args.question_id).length
 
+    },
+
+    Mutation:{
+        newVote: (parent,{data}) => {
+            const newVote = {
+                id:uniqid(),
+                option_id:data.option_id,
+                question_id:data.question_id
+            }
+            const votes = [newVote,...db.votes]
+            db.votes = votes
+            return newVote
+        },
+
+        newQuestion: (parent,{data})=> {
+            const newQuestion = {
+                id:uniqid(),
+                title:data.title,
+                options:data.options
+            }
+
+            const questions = [newQuestion, ...db.questions]
+            db.questions = questions
+            return newQuestion
+        }
     },
 
     Vote:{
