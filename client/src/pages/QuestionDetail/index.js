@@ -103,17 +103,7 @@ function QuestionDetail() {
               >
                 <Radio value={option.id} display="block" size="lg">
                   {option.text}
-                  <span>
-                    -------- Active vote for {option.text}: (
-                    {(
-                      (question.votes.filter(
-                        (vote) => vote.option.id === option.id
-                      ).length *
-                        100) /
-                      (totalVotes === 0 ? 1 : totalVotes)
-                    ).toFixed(2) + "%"}
-                    )
-                  </span>
+                 
                 </Radio>
               </RadioGroup>
 
