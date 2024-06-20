@@ -1,14 +1,13 @@
 import { createServer } from 'node:http'
-import { createSchema, createYoga } from 'graphql-yoga'
+import {  createSchema, createYoga } from 'graphql-yoga'
 import { db } from './db'
 import { WebSocketServer } from 'ws'
 import { useServer } from 'graphql-ws/lib/use/ws'
 import uniqid from "uniqid"
-import { title } from 'node:process'
 
+import {PubSub} from "graphql-subscriptions"
 
-
-
+const pubsub = new PubSub()
 
 
 export const schema = createSchema({
@@ -53,8 +52,8 @@ export const schema = createSchema({
     type Question{
         id:ID!,
         title:String!
-        options:[Option!]
-        votes:[Vote!]
+        options:[Option]
+        votes:[Vote]
         total:Int
     }
 
@@ -75,6 +74,11 @@ export const schema = createSchema({
         option:Option!
     }
 
+    type Subscription{
+      questionAdded:Question!
+      voteAdded:Vote!
+      optionsAdded:[Option!]
+    }
 
   `,
 
@@ -94,6 +98,21 @@ export const schema = createSchema({
 
     },
 
+    Subscription:{
+
+      questionAdded: {
+        subscribe: (_,__) => pubsub.asyncIterator("questionAdded")
+      },
+
+      voteAdded: {
+        subscribe: (_,__) => pubsub.asyncIterator("voteAdded")
+      },
+      optionsAdded: {
+        subscribe: (_,__) => pubsub.asyncIterator("optionsAdded")
+      },
+
+    },
+
     Mutation:{
         newVote: (parent,{data}) => {
             const newVote = {
@@ -103,6 +122,7 @@ export const schema = createSchema({
             }
             const votes = [newVote,...db.votes]
             db.votes = votes
+            pubsub.publish("voteAdded",{voteAdded:newVote})
             return newVote
         },
 
@@ -114,6 +134,7 @@ export const schema = createSchema({
 
             const questions = [newQuestion, ...db.questions]
             db.questions = questions
+            pubsub.publish("questionAdded",{questionAdded:newQuestion})
             return newQuestion
         },
         newOptions: (parent,{data})=> {
@@ -135,6 +156,8 @@ export const schema = createSchema({
           const lastOptions = [...newOptions, ...db.options]
           db.options = lastOptions
           console.log(newOptions)
+          pubsub.publish("optionsAdded",{optionsAdded:newOptions})
+
           return  lastOptions
       }
     },
@@ -151,7 +174,6 @@ export const schema = createSchema({
         votes: (parent,args)=> db.votes.filter((vote)=> vote.question_id === parent.id),
         total:(parent,args)=> {
             const count = db.votes.filter((vote)=> vote.question_id === parent.id).length
-            console.log("count", count)
             return count
         }
     },

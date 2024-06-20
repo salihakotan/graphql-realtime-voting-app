@@ -13,7 +13,9 @@ root.render(
   <ApolloProvider client={server}>
   <Router>
   <ChakraProvider>
+  <React.Fragment>
     <App />
+    </React.Fragment>
     </ChakraProvider>
     </Router>
     </ApolloProvider>

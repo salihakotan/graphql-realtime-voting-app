@@ -1,49 +1,79 @@
 import { useMutation } from "@apollo/client";
-import { AbsoluteCenter, Box, Button, Container, Divider, Heading, Input } from "@chakra-ui/react";
+import {
+  AbsoluteCenter,
+  Box,
+  Button,
+  Container,
+  Divider,
+  Heading,
+  Input,
+} from "@chakra-ui/react";
 import React, { useState } from "react";
 import { NEW_OPTIONS_MUTATION, NEW_QUESTION_MUTATION } from "./queries";
-import uniqid from "uniqid"
+import uniqid from "uniqid";
+import { useNavigate } from "react-router-dom";
 
-
+import {message} from "antd"
 
 function NewQuestion() {
 
-    const baseQuestionId= uniqid()
+
+    const navigate = useNavigate()
+
+  const baseQuestionId = uniqid();
+
+  const initialOptions = ["",""];
 
   const [question, setQuestion] = useState("");
-  const [options,setOptions] = useState([])
+  const [options, setOptions] = useState(initialOptions);
 
-  const [addQuestion, { loading}] = useMutation(NEW_QUESTION_MUTATION, {
+  const [addQuestion, { loading }] = useMutation(NEW_QUESTION_MUTATION, {
     variables: {
       data: {
-        id:baseQuestionId,
+        id: baseQuestionId,
         title: question,
       },
     },
   });
 
-
-  const [newOptions, { loading:optionsLoading}] = useMutation(NEW_OPTIONS_MUTATION, {
-    variables: {
-      data: {
-        options:options,
-        question_id:baseQuestionId
+  const [newOptions, { loading: optionsLoading }] = useMutation(
+    NEW_OPTIONS_MUTATION,
+    {
+      variables: {
+        data: {
+          options: options,
+          question_id: baseQuestionId,
+        },
       },
-    },
-  });
+    }
+  );
 
- 
+  const handleClickedAddQuestion = () => {
 
-  const handleClickedAddQuestion  = () => {
-    addQuestion()
-    newOptions()
-    setQuestion("")
-  }
+    const filledOptions = options.filter((option)=> option.trim() !== "")
 
+    if(filledOptions.length<2){
+        message.error("Please add at least 2 options")
+        return false
+    }
+
+    if(question.trim() === ""){
+        message.error("Please enter a valid question title.")
+        return false
+    }
+
+    setOptions(filledOptions)
+
+    addQuestion();
+    newOptions();
+    message.success("Your question has been added successfully :)")
+    navigate("/")
+};
 
   const addOption = () => {
-    console.log("option input added")
-  }
+    setOptions([...options,""])
+};
+
 
   return (
     <div>
@@ -52,11 +82,10 @@ function NewQuestion() {
       </Heading>
 
       <Input
-      bgColor="#fbe5ff"
+        bgColor="#fbe5ff"
         size="lg"
         disabled={loading || optionsLoading}
         m="2"
-        
         value={question}
         onChange={(e) => setQuestion(e.target.value)}
         placeholder="Enter a question"
@@ -65,14 +94,23 @@ function NewQuestion() {
       <Box position="relative" padding="10">
         <Divider />
         <AbsoluteCenter bg="white" px="4">
-         Options
+          Options
         </AbsoluteCenter>
       </Box>
+     
 
-      <Input variant='filled' disabled={loading || optionsLoading} m="2" placeholder="Enter an option..." />
-      <Input variant='filled'  disabled={loading || optionsLoading} m="2" placeholder="Enter an option..." />
-
-
+      {options &&
+        options.map((option,i) => (
+          <div key={i}>
+            <Input
+            onChange={(e)=> options[i]= e.target.value}
+              variant="filled"
+              disabled={loading || optionsLoading}
+              m="2"
+              placeholder="Enter an option..."
+            />
+          </div>
+        ))}
 
       <Button
         disabled={loading || optionsLoading}
@@ -84,7 +122,6 @@ function NewQuestion() {
       >
         Add New Option
       </Button>
-
 
       <Button
         disabled={loading || optionsLoading}

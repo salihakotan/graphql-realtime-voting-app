@@ -1,5 +1,5 @@
-import React from "react";
-import { GET_QUESTIONS_QUERY } from "./queries";
+import React, { useEffect } from "react";
+import { GET_QUESTIONS_QUERY, QUESTION_ADDED_SUBSCRIPTION } from "./queries";
 import { useQuery } from "@apollo/client";
 import {
   TableContainer,
@@ -15,7 +15,33 @@ import {
 import { useNavigate } from "react-router-dom";
 
 function Home() {
-  const { data, error, loading } = useQuery(GET_QUESTIONS_QUERY);
+  const {called, data, error, loading ,subscribeToMore} = useQuery(GET_QUESTIONS_QUERY);
+
+
+
+    useEffect(()=> {
+
+        if(called && !loading){
+            subscribeToMore({
+                document:QUESTION_ADDED_SUBSCRIPTION,
+                updateQuery:(prev,{subscriptionData}) => {
+                    if(!subscriptionData.data) return prev
+
+                    const {questionAdded} = subscriptionData.data
+
+                    return {
+                        questions:[
+                            questionAdded,
+                            ...prev.questions
+                        ]
+                    }
+                    
+                }
+            })
+        }
+
+    },[subscribeToMore,loading,called])
+
 
 
   const navigate = useNavigate()

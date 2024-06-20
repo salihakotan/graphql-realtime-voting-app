@@ -29,3 +29,17 @@ mutation newVote($data:NewVoteInput!){
   }
 }
 `
+
+export const VOTE_ADDED_SUBSCRIPTION=gql`
+subscription voteAdded{
+  voteAdded{
+    id
+    question_id,
+    option_id
+    question{
+      id,
+      title
+    }
+    option{text,id}
+  }
+}`
