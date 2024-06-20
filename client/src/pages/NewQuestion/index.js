@@ -1,49 +1,45 @@
 import { useMutation } from "@apollo/client";
 import { AbsoluteCenter, Box, Button, Container, Divider, Heading, Input } from "@chakra-ui/react";
 import React, { useState } from "react";
-import { NEW_QUESTION_MUTATION } from "./queries";
+import { NEW_OPTIONS_MUTATION, NEW_QUESTION_MUTATION } from "./queries";
+import uniqid from "uniqid"
 
-
-const initialOptions = [
-    {
-        id:"1",
-        text:"Night",
-        question_id:"1",
-    },
-    {
-        id:"2",
-        text:"Morning",
-        question_id:"1",
-    },
-    {
-        id:"3",
-        text:"Both",
-        question_id:"1",
-    },
-    {
-        id:"4",
-        text:"Tea",
-        question_id:"2",
-    },
-    {
-        id:"5",
-        text:"Coffee",
-        question_id:"2",
-    },
-]
 
 
 function NewQuestion() {
-  const [question, setQuestion] = useState("");
 
-  const [addQuestion, { loading }] = useMutation(NEW_QUESTION_MUTATION, {
+    const baseQuestionId= uniqid()
+
+  const [question, setQuestion] = useState("");
+  const [options,setOptions] = useState([])
+
+  const [addQuestion, { loading}] = useMutation(NEW_QUESTION_MUTATION, {
     variables: {
       data: {
+        id:baseQuestionId,
         title: question,
-        options:initialOptions
       },
     },
   });
+
+
+  const [newOptions, { loading:optionsLoading}] = useMutation(NEW_OPTIONS_MUTATION, {
+    variables: {
+      data: {
+        options:options,
+        question_id:baseQuestionId
+      },
+    },
+  });
+
+ 
+
+  const handleClickedAddQuestion  = () => {
+    addQuestion()
+    newOptions()
+    setQuestion("")
+  }
+
 
   const addOption = () => {
     console.log("option input added")
@@ -58,7 +54,7 @@ function NewQuestion() {
       <Input
       bgColor="#fbe5ff"
         size="lg"
-        disabled={loading}
+        disabled={loading || optionsLoading}
         m="2"
         
         value={question}
@@ -73,13 +69,13 @@ function NewQuestion() {
         </AbsoluteCenter>
       </Box>
 
-      <Input variant='filled' disabled={loading} m="2" placeholder="Enter an option..." />
-      <Input variant='filled'  disabled={loading} m="2" placeholder="Enter an option..." />
+      <Input variant='filled' disabled={loading || optionsLoading} m="2" placeholder="Enter an option..." />
+      <Input variant='filled'  disabled={loading || optionsLoading} m="2" placeholder="Enter an option..." />
 
 
 
       <Button
-        disabled={loading}
+        disabled={loading || optionsLoading}
         onClick={addOption}
         colorScheme="purple"
         backgroundColor="#4229ff"
@@ -91,8 +87,8 @@ function NewQuestion() {
 
 
       <Button
-        disabled={loading}
-        onClick={addQuestion}
+        disabled={loading || optionsLoading}
+        onClick={handleClickedAddQuestion}
         colorScheme="purple"
         backgroundColor="#4229ff"
         m="2"

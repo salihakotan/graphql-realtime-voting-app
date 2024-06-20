@@ -33,15 +33,19 @@ export const schema = createSchema({
     }
 
     input NewQuestionInput{
+      id:ID!,
         title:String!,
-        # options:[Option!]
     }
 
+    input NewOptionsInput{
+      options:[String!],
+      question_id:ID!
+    }
 
     type Mutation{
         newVote(data:NewVoteInput!):Vote!
         newQuestion(data:NewQuestionInput!): Question!
-        newOption(text:String!,question_id:ID!): Option
+        newOptions(data:NewOptionsInput!): [Option]
     }
 
   
@@ -55,10 +59,10 @@ export const schema = createSchema({
     }
 
     type Option{
-        id:ID!
-        text:String!
-        question_id:ID!,
-        question:Question!
+        id:ID
+        text:String
+        question_id:ID,
+        question:Question
     }
 
     
@@ -104,25 +108,34 @@ export const schema = createSchema({
 
         newQuestion: (parent,{data})=> {
             const newQuestion = {
-                id:uniqid(),
+                id:data.id,
                 title:data.title,
-                options:data.options
-            }
+           }
 
             const questions = [newQuestion, ...db.questions]
             db.questions = questions
             return newQuestion
         },
-        newOption: (parent,{text,question_id})=> {
-          const newOption = {
+        newOptions: (parent,{data})=> {
+          
+          const newOptions = []
+
+
+          data.options.map((optionn)=> {
+            const newOption = {
               id:uniqid(),
-              question_id,
-              text
+              question_id:data.question_id,
+              text:optionn
           }
 
-          const options = [newOption, ...db.options]
-          db.options = options
-          return newOption
+            newOptions.push(newOption)
+
+          })
+
+          const lastOptions = [...newOptions, ...db.options]
+          db.options = lastOptions
+          console.log(newOptions)
+          return  lastOptions
       }
     },
 
