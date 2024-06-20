@@ -9,7 +9,7 @@ query getQuestions{
     options{id,text
       question_id,
       ,question{title}}
-    votes{id,question{title}, option{text}}
+    votes{id,question{title}, option{id,text}}
   }
 }
 `

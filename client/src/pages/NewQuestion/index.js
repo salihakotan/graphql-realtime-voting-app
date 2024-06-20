@@ -3,6 +3,36 @@ import { AbsoluteCenter, Box, Button, Container, Divider, Heading, Input } from 
 import React, { useState } from "react";
 import { NEW_QUESTION_MUTATION } from "./queries";
 
+
+const initialOptions = [
+    {
+        id:"1",
+        text:"Night",
+        question_id:"1",
+    },
+    {
+        id:"2",
+        text:"Morning",
+        question_id:"1",
+    },
+    {
+        id:"3",
+        text:"Both",
+        question_id:"1",
+    },
+    {
+        id:"4",
+        text:"Tea",
+        question_id:"2",
+    },
+    {
+        id:"5",
+        text:"Coffee",
+        question_id:"2",
+    },
+]
+
+
 function NewQuestion() {
   const [question, setQuestion] = useState("");
 
@@ -10,6 +40,7 @@ function NewQuestion() {
     variables: {
       data: {
         title: question,
+        options:initialOptions
       },
     },
   });
@@ -25,7 +56,7 @@ function NewQuestion() {
       </Heading>
 
       <Input
-      bgColor="#f5b9ff"
+      bgColor="#fbe5ff"
         size="lg"
         disabled={loading}
         m="2"

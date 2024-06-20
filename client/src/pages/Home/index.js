@@ -30,7 +30,6 @@ function Home() {
 
   const { questions } = data;
 
-  console.log("data: ", data);
 
 
   const handleRowClick = (question) => {

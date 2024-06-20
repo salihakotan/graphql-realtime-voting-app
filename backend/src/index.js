@@ -7,6 +7,10 @@ import uniqid from "uniqid"
 import { title } from 'node:process'
 
 
+
+
+
+
 export const schema = createSchema({
   typeDefs: /* GraphQL */ `
     type Query {
@@ -30,17 +34,16 @@ export const schema = createSchema({
 
     input NewQuestionInput{
         title:String!,
+        # options:[Option!]
     }
-
-   
 
 
     type Mutation{
         newVote(data:NewVoteInput!):Vote!
         newQuestion(data:NewQuestionInput!): Question!
+        newOption(text:String!,question_id:ID!): Option
     }
 
-   
   
 
     type Question{
@@ -57,6 +60,8 @@ export const schema = createSchema({
         question_id:ID!,
         question:Question!
     }
+
+    
 
     type Vote{
         id:ID!
@@ -107,7 +112,18 @@ export const schema = createSchema({
             const questions = [newQuestion, ...db.questions]
             db.questions = questions
             return newQuestion
-        }
+        },
+        newOption: (parent,{text,question_id})=> {
+          const newOption = {
+              id:uniqid(),
+              question_id,
+              text
+          }
+
+          const options = [newOption, ...db.options]
+          db.options = options
+          return newOption
+      }
     },
 
     Vote:{
